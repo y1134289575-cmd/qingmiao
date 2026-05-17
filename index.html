@@ -1,10 +1,1072 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <title>Qingmiao</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>青苗水果团购</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #5a9e6f;
+  --primary-light: #7dba8f;
+  --primary-pale: #e8f5ec;
+  --primary-dark: #3d7a52;
+  --pink: #f4a7b9;
+  --pink-light: #fce4ec;
+  --pink-pale: #fff0f4;
+  --peach: #ffb347;
+  --peach-light: #fff3e0;
+  --cream: #fdfaf7;
+  --white: #ffffff;
+  --dark: #2d3a2e;
+  --gray: #7a8c7b;
+  --gray-light: #edf2ed;
+  --shadow-sm: 0 2px 12px rgba(90,158,111,0.10);
+  --shadow: 0 4px 24px rgba(90,158,111,0.14);
+  --shadow-md: 0 8px 40px rgba(90,158,111,0.18);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;overflow-x:hidden;}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-bottom:80px;}
+.page.active{display:block;}
+
+/* HEADER */
+.app-header{background:var(--white);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(90,158,111,0.08);}
+.logo{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;color:var(--primary-dark);letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.logo-leaf{font-size:18px;}
+.cart-btn{position:relative;background:var(--primary-pale);border:none;border-radius:50px;padding:9px 16px;font-size:13px;color:var(--primary-dark);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;font-family:'Noto Sans SC',sans-serif;}
+.cart-btn:hover{background:var(--primary);color:white;}
+.cart-count{background:var(--pink);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.cart-count.hidden{display:none;}
+
+/* BANNER SLIDER */
+.banner-wrap{position:relative;overflow:hidden;background:var(--primary-pale);}
+.banner-track{display:flex;transition:transform .4s ease;}
+.banner-slide{min-width:100%;position:relative;overflow:hidden;}
+.banner-slide img{width:100%;height:180px;object-fit:cover;display:block;}
+.banner-slide-inner{min-width:100%;height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;text-align:center;}
+.banner-title{font-family:'Noto Serif SC',serif;font-size:22px;font-weight:700;color:var(--white);text-shadow:0 2px 8px rgba(0,0,0,.2);margin-bottom:6px;}
+.banner-sub{font-size:13px;color:rgba(255,255,255,.9);line-height:1.6;}
+.banner-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 6px;}
+.banner-dot{width:6px;height:6px;border-radius:50%;background:var(--gray-light);border:none;cursor:pointer;transition:all .2s;}
+.banner-dot.active{background:var(--primary);width:18px;border-radius:4px;}
+
+/* SECTION */
+.section{padding:20px 16px 8px;}
+.section-title{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-title-line{flex:1;height:1px;background:linear-gradient(to right,var(--gray-light),transparent);}
+
+/* FRUIT GRID */
+.fruit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:0 16px 16px;}
+.fruit-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;cursor:pointer;}
+.fruit-card:active{transform:scale(.97);}
+.fruit-img-wrap{width:100%;height:140px;overflow:hidden;background:var(--primary-pale);position:relative;}
+.fruit-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.fruit-card:hover .fruit-img-wrap img{transform:scale(1.05);}
+.fruit-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;}
+.fruit-info{padding:12px 12px 14px;}
+.fruit-name{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.fruit-desc{font-size:11px;color:var(--gray);margin-bottom:9px;line-height:1.5;}
+.fruit-price-row{display:flex;align-items:center;justify-content:space-between;}
+.fruit-price{font-size:17px;font-weight:700;color:var(--primary-dark);}
+.fruit-price span{font-size:11px;color:var(--gray);font-weight:400;}
+.add-btn{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;border:none;border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;box-shadow:0 3px 10px rgba(90,158,111,.3);}
+.add-btn:hover{transform:scale(1.1);}
+.qty-control{display:flex;align-items:center;gap:6px;}
+.qty-btn{background:var(--primary-pale);border:none;border-radius:50%;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--primary-dark);font-weight:700;transition:background .2s;}
+.qty-btn:hover{background:var(--primary);color:white;}
+.qty-num{font-size:14px;font-weight:700;min-width:18px;text-align:center;}
+.fruit-sold-out{background:var(--pink-light);color:var(--pink);font-size:10px;font-weight:700;padding:2px 8px;border-radius:50px;margin-left:6px;}
+.out-of-stock{opacity:.55;pointer-events:none;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--white);padding:8px 0 18px;display:flex;box-shadow:0 -1px 16px rgba(90,158,111,.10);z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 0;color:var(--gray);font-size:10px;font-weight:500;transition:color .2s;border:none;background:none;font-family:'Noto Sans SC',sans-serif;}
+.nav-item.active{color:var(--primary-dark);}
+.nav-icon{font-size:22px;}
+.nav-item.active .nav-dot{width:4px;height:4px;background:var(--primary);border-radius:50%;margin-top:2px;}
+
+/* CART */
+.cart-empty{text-align:center;padding:80px 20px;color:var(--gray);}
+.cart-empty .big-emoji{font-size:60px;margin-bottom:16px;}
+.cart-list{padding:16px;}
+.cart-item{background:var(--white);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);}
+.cart-item-img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--primary-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;}
+.cart-item-img img{width:100%;height:100%;object-fit:cover;}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:14px;font-weight:600;}
+.cart-item-price{font-size:12px;color:var(--primary-dark);margin-top:3px;font-weight:600;}
+.cart-summary{background:var(--white);margin:0 16px;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);}
+.summary-row{display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-bottom:8px;}
+.summary-total{display:flex;justify-content:space-between;font-size:17px;font-weight:700;padding-top:12px;border-top:1px solid var(--gray-light);margin-top:8px;}
+.summary-total span:last-child{color:var(--primary-dark);}
+.checkout-btn{width:calc(100% - 32px);margin:16px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border:none;border-radius:50px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all .2s;box-shadow:0 4px 16px rgba(90,158,111,.3);}
+.checkout-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(90,158,111,.4);}
+.checkout-btn:disabled{background:var(--gray-light);color:var(--gray);cursor:not-allowed;box-shadow:none;transform:none;}
+
+/* CHECKOUT */
+.order-form{padding:16px;}
+.form-card{background:var(--white);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.form-card h3{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--dark);}
+.form-group{margin-bottom:13px;}
+.form-group label{display:block;font-size:12px;color:var(--gray);margin-bottom:5px;}
+.form-group input,.form-group textarea{width:100%;border:1.5px solid var(--gray-light);border-radius:var(--radius-sm);padding:11px 13px;font-size:14px;font-family:'Noto Sans SC',sans-serif;color:var(--dark);background:var(--cream);outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--primary-light);}
+.form-group textarea{height:76px;resize:none;}
+.payment-notice{background:linear-gradient(135deg,var(--pink-pale),var(--peach-light));border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;font-size:12px;color:#9e4460;line-height:1.7;border:1px solid rgba(244,167,185,.3);}
+.payment-notice strong{display:block;margin-bottom:3px;font-size:13px;}
+.submit-order-btn{width:100%;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border:none;border-radius:50px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;box-shadow:0 4px 16px rgba(90,158,111,.3);}
+
+/* SUCCESS */
+.success-page{text-align:center;padding:60px 24px;}
+.success-emoji{font-size:72px;margin-bottom:20px;animation:bounce .8s infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
+.success-page h2{font-family:'Noto Serif SC',serif;font-size:22px;color:var(--primary-dark);margin-bottom:10px;}
+.success-page p{font-size:14px;color:var(--gray);line-height:1.7;margin-bottom:20px;}
+.wechat-box{background:var(--primary-pale);border-radius:var(--radius-sm);padding:14px;margin-bottom:24px;color:var(--primary-dark);font-weight:600;font-size:14px;}
+.back-home-btn{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border:none;border-radius:50px;padding:14px 32px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;}
+
+/* MY PAGE */
+.my-page-header{background:linear-gradient(160deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);padding:40px 24px 60px;position:relative;overflow:hidden;}
+.my-page-header::before{content:'🌿';position:absolute;right:-10px;top:10px;font-size:80px;opacity:.12;}
+.my-page-header::after{content:'🌸';position:absolute;left:20px;bottom:10px;font-size:60px;opacity:.15;}
+.avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.avatar{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.6);object-fit:cover;background:var(--pink-light);font-size:36px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.username{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;color:white;}
+.edit-profile-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:white;border-radius:50px;padding:6px 16px;font-size:12px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;backdrop-filter:blur(4px);}
+.my-menu{background:var(--white);border-radius:24px 24px 0 0;margin-top:-24px;padding:24px 20px;min-height:calc(100vh - 240px);}
+.my-tabs{display:flex;gap:12px;margin-bottom:20px;}
+.my-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;border:2px solid var(--gray-light);color:var(--gray);transition:all .2s;background:none;font-family:'Noto Sans SC',sans-serif;}
+.my-tab.active{background:var(--primary-pale);border-color:var(--primary);color:var(--primary-dark);}
+.my-tab-content{display:none;}
+.my-tab-content.active{display:block;}
+
+/* ORDERS */
+.order-card{background:var(--white);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-light);}
+.order-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.order-id{font-size:11px;color:var(--gray);}
+.order-status{font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;}
+.status-pending{background:#fff3cd;color:#856404;}
+.status-confirmed{background:var(--primary-pale);color:var(--primary-dark);}
+.status-delivered{background:#d4edda;color:#155724;}
+.status-refund{background:var(--pink-light);color:#9e4460;}
+.order-items{font-size:13px;color:var(--gray);margin-bottom:6px;}
+.order-total{font-size:15px;font-weight:700;color:var(--primary-dark);}
+.order-info{font-size:11px;color:var(--gray);margin-top:5px;}
+.refund-btn{margin-top:10px;background:none;border:1.5px solid var(--pink);color:var(--pink);border-radius:50px;padding:7px 16px;font-size:12px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all .2s;}
+.refund-btn:hover{background:var(--pink);color:white;}
+
+/* DELIVERY TIMELINE */
+.delivery-section{margin-bottom:16px;}
+.delivery-select-order{background:var(--white);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--gray);cursor:pointer;text-align:center;border:1.5px dashed var(--primary-light);}
+.timeline{padding:12px 0;}
+.timeline-item{display:flex;gap:16px;padding-bottom:24px;position:relative;}
+.timeline-item:last-child{padding-bottom:0;}
+.timeline-left{display:flex;flex-direction:column;align-items:center;width:56px;flex-shrink:0;}
+.timeline-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gray-light);position:relative;z-index:1;transition:all .3s;}
+.timeline-icon.active{background:var(--primary-pale);box-shadow:0 0 0 4px rgba(90,158,111,.15);}
+.timeline-icon.done{background:var(--primary-pale);}
+.timeline-line{width:2px;flex:1;background:var(--gray-light);margin-top:4px;min-height:20px;}
+.timeline-line.done{background:var(--primary-light);}
+.timeline-right{flex:1;padding-top:8px;}
+.timeline-title{font-size:15px;font-weight:700;color:var(--gray);}
+.timeline-title.active{color:var(--primary-dark);}
+.timeline-title.done{color:var(--primary);}
+.timeline-desc{font-size:12px;color:var(--gray);margin-top:3px;line-height:1.5;}
+
+/* SVG ICONS */
+.svg-icon{width:36px;height:36px;}
+@keyframes ride{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+@keyframes wheel{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.wheel-anim{transform-origin:center;animation:wheel 1s linear infinite;}
+.body-anim{animation:ride .6s ease-in-out infinite;}
+
+/* AFTER-SALE / MESSAGE BOARD */
+.message-board{padding:0;}
+.message-input-area{background:var(--white);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.message-input-area textarea{width:100%;border:1.5px solid var(--gray-light);border-radius:var(--radius-sm);padding:12px;font-size:13px;font-family:'Noto Sans SC',sans-serif;height:90px;resize:none;outline:none;transition:border-color .2s;}
+.message-input-area textarea:focus{border-color:var(--primary-light);}
+.send-msg-btn{width:100%;background:linear-gradient(135deg,var(--pink),#e8849a);color:white;border:none;border-radius:50px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;margin-top:10px;}
+.msg-list{display:flex;flex-direction:column;gap:12px;}
+.msg-bubble{background:var(--white);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow-sm);}
+.msg-meta{display:flex;justify-content:space-between;margin-bottom:6px;}
+.msg-sender{font-size:12px;font-weight:600;color:var(--primary-dark);}
+.msg-time{font-size:11px;color:var(--gray);}
+.msg-text{font-size:13px;color:var(--dark);line-height:1.6;}
+.msg-reply{background:var(--primary-pale);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;color:var(--primary-dark);line-height:1.6;border-left:3px solid var(--primary);}
+.msg-reply-label{font-weight:700;display:block;margin-bottom:3px;}
+
+/* ADMIN */
+.admin-login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(160deg,var(--primary-dark) 0%,var(--primary) 60%,#a8d5b5 100%);}
+.admin-login::before{content:'🌿🌸🍓';font-size:28px;letter-spacing:8px;opacity:.4;margin-bottom:20px;}
+.admin-login-card{background:white;border-radius:24px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.admin-login h2{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;color:var(--primary-dark);margin-bottom:6px;}
+.admin-login p{font-size:13px;color:var(--gray);margin-bottom:24px;}
+.login-input{width:100%;border:1.5px solid var(--gray-light);border-radius:var(--radius-sm);padding:13px 15px;font-size:14px;font-family:'Noto Sans SC',sans-serif;margin-bottom:12px;outline:none;transition:border-color .2s;color:var(--dark);}
+.login-input:focus{border-color:var(--primary-light);}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border:none;border-radius:50px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;}
+.login-error{color:#e74c3c;font-size:12px;margin-top:8px;text-align:center;display:none;}
+.login-hint{margin-top:14px;font-size:11px;color:var(--gray);text-align:center;}
+
+.admin-panel{padding-bottom:20px;}
+.admin-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;}
+.admin-header h2{font-family:'Noto Serif SC',serif;font-size:17px;}
+.logout-btn{background:rgba(255,255,255,.2);border:none;color:white;border-radius:50px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;}
+.admin-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--gray-light);position:sticky;top:0;z-index:10;overflow-x:auto;}
+.admin-tab{flex-shrink:0;padding:13px 16px;text-align:center;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;border:none;background:none;font-family:'Noto Sans SC',sans-serif;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.admin-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
+.admin-section{display:none;padding:16px;}
+.admin-section.active{display:block;}
+
+.admin-fruit-card{background:var(--white);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);}
+.admin-fruit-img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--primary-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;}
+.admin-fruit-img img{width:100%;height:100%;object-fit:cover;}
+.admin-fruit-info{flex:1;min-width:0;}
+.admin-fruit-name{font-size:14px;font-weight:600;}
+.admin-fruit-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.admin-actions{display:flex;gap:6px;flex-shrink:0;}
+.edit-btn,.del-btn{border:none;border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:600;}
+.edit-btn{background:var(--primary-pale);color:var(--primary-dark);}
+.del-btn{background:var(--pink-light);color:#9e4460;}
+.add-fruit-btn{width:100%;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;border:none;border-radius:var(--radius-sm);padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-sm);text-align:center;}
+.stat-num{font-size:26px;font-weight:700;color:var(--primary-dark);}
+.stat-label{font-size:11px;color:var(--gray);margin-top:3px;}
+
+.admin-order-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.admin-order-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.admin-order-id{font-size:11px;color:var(--gray);}
+.admin-order-name{font-size:13px;font-weight:600;margin-bottom:4px;}
+.admin-order-detail{font-size:12px;color:var(--gray);line-height:1.7;}
+.admin-order-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.status-btn{border:none;border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:600;}
+.btn-confirm{background:var(--primary-pale);color:var(--primary-dark);}
+.btn-deliver{background:#d4edda;color:#155724;}
+.btn-refund-ok{background:var(--pink-light);color:#9e4460;}
+
+/* Delivery admin */
+.delivery-order-row{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.delivery-order-row .d-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.delivery-order-row .d-info{font-size:12px;color:var(--gray);}
+.delivery-stage-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.stage-btn{border:2px solid var(--gray-light);background:none;border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:600;color:var(--gray);transition:all .2s;}
+.stage-btn.active{background:var(--primary-pale);border-color:var(--primary);color:var(--primary-dark);}
+
+/* Admin messages */
+.admin-msg-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.admin-msg-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.admin-reply-area{margin-top:10px;}
+.admin-reply-area textarea{width:100%;border:1.5px solid var(--gray-light);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-family:'Noto Sans SC',sans-serif;height:70px;resize:none;outline:none;}
+.admin-reply-btn{background:var(--primary-pale);color:var(--primary-dark);border:none;border-radius:50px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans SC',sans-serif;margin-top:8px;}
+
+/* Admin banner */
+.banner-admin-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.banner-preview{width:100%;height:100px;border-radius:8px;object-fit:cover;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gray);margin-bottom:10px;overflow:hidden;}
+.banner-preview img{width:100%;height:100%;object-fit:cover;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:'Noto Serif SC',serif;font-size:17px;margin-bottom:18px;color:var(--dark);}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.modal-cancel{flex:1;background:var(--gray-light);border:none;border-radius:50px;padding:13px;font-size:14px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:600;color:var(--gray);}
+.modal-confirm{flex:2;background:linear-gradient(135deg,var(--primary-dark),var(--primary));border:none;border-radius:50px;padding:13px;font-size:14px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:700;color:white;}
+.img-preview{width:100%;height:120px;border-radius:var(--radius-sm);object-fit:cover;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;margin-bottom:10px;}
+.img-preview img{width:100%;height:100%;object-fit:cover;}
+
+/* Profile edit modal */
+.avatar-upload{width:80px;height:80px;border-radius:50%;background:var(--primary-pale);border:2px dashed var(--primary-light);display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto 16px;overflow:hidden;position:relative;}
+.avatar-upload img{width:100%;height:100%;object-fit:cover;}
+.avatar-upload-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.3);color:white;font-size:10px;text-align:center;padding:3px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:white;padding:11px 22px;border-radius:50px;font-size:13px;opacity:0;transition:all .3s;z-index:2000;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Profile */
+.profile-card{background:var(--white);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);margin-bottom:12px;cursor:pointer;}
+.profile-card-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.profile-card-avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-card-info{flex:1;}
+.profile-card-name{font-size:15px;font-weight:700;}
+.profile-card-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+
+@media(max-width:360px){.fruit-grid{gap:10px;}.fruit-img-wrap{height:120px;}}
+</style>
 </head>
 <body>
-  <h1>Hello GitHub Pages!</h1>
-  <p>我的第一个网站</p>
+
+<!-- USER APP -->
+<div id="userApp">
+
+<!-- HOME -->
+<div id="homePage" class="page active">
+  <div class="app-header">
+    <div class="logo"><span class="logo-leaf">🌱</span>青苗水果团购</div>
+    <button class="cart-btn" onclick="goToCart()">
+      🛒 购物车
+      <span class="cart-count hidden" id="cartCount">0</span>
+    </button>
+  </div>
+  <!-- BANNER -->
+  <div class="banner-wrap">
+    <div class="banner-track" id="bannerTrack"></div>
+    <div class="banner-dots" id="bannerDots"></div>
+  </div>
+  <div class="section"><div class="section-title">🍓 今日鲜果 <span class="section-title-line"></span></div></div>
+  <div class="fruit-grid" id="fruitGrid"></div>
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="showNav('home',this)"><span class="nav-icon">🏠</span>首页</button>
+    <button class="nav-item" onclick="showNav('cart',this)"><span class="nav-icon">🛒</span>购物车</button>
+    <button class="nav-item" onclick="showNav('aftersale',this)"><span class="nav-icon">💬</span>售后</button>
+    <button class="nav-item" onclick="showNav('my',this)"><span class="nav-icon">🌸</span>我的</button>
+  </nav>
+</div>
+
+<!-- CART -->
+<div id="cartPage" class="page">
+  <div class="app-header">
+    <div class="logo"><span class="logo-leaf">🌱</span>青苗水果团购</div>
+    <div style="font-size:13px;color:var(--gray)">购物车</div>
+  </div>
+  <div id="cartContent"></div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="showNav('home',this)"><span class="nav-icon">🏠</span>首页</button>
+    <button class="nav-item active" onclick="showNav('cart',this)"><span class="nav-icon">🛒</span>购物车</button>
+    <button class="nav-item" onclick="showNav('aftersale',this)"><span class="nav-icon">💬</span>售后</button>
+    <button class="nav-item" onclick="showNav('my',this)"><span class="nav-icon">🌸</span>我的</button>
+  </nav>
+</div>
+
+<!-- CHECKOUT -->
+<div id="checkoutPage" class="page">
+  <div class="app-header">
+    <button onclick="showNav('cart',null);showPage('cartPage');renderCart();" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--dark)">←</button>
+    <div style="font-size:15px;font-weight:700">填写订单</div>
+    <div></div>
+  </div>
+  <div class="order-form">
+    <div class="payment-notice"><strong>🌸 温馨提示</strong>下单后请添加客服微信完成付款，我们会尽快把新鲜水果送到你的宿舍门口～</div>
+    <div class="form-card">
+      <h3>📍 收货信息</h3>
+      <div class="form-group"><label>姓名</label><input type="text" id="buyerName" placeholder="请输入您的姓名"></div>
+      <div class="form-group"><label>手机号</label><input type="tel" id="buyerPhone" placeholder="请输入手机号"></div>
+      <div class="form-group"><label>宿舍楼栋</label><input type="text" id="buyerBuilding" placeholder="如：5号楼 301室"></div>
+      <div class="form-group"><label>备注（可选）</label><textarea id="buyerNote" placeholder="特殊要求请备注～"></textarea></div>
+    </div>
+    <div class="form-card" id="checkoutSummary"></div>
+    <button class="submit-order-btn" onclick="submitOrder()">🌸 提交订单</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="successPage" class="page">
+  <div class="success-page">
+    <div class="success-emoji">🎉</div>
+    <h2>订单已提交！</h2>
+    <p>我们已经收到你的订单啦～<br>请添加客服微信完成付款，付款后安排配送🌿</p>
+    <div class="wechat-box">📱 客服微信：<strong id="serviceWechat">qingmiao2024</strong></div>
+    <button class="back-home-btn" onclick="goHome()">返回首页</button>
+  </div>
+</div>
+
+<!-- AFTER-SALE -->
+<div id="aftersalePage" class="page">
+  <div class="app-header">
+    <div class="logo"><span class="logo-leaf">🌱</span>青苗水果团购</div>
+    <div style="font-size:13px;color:var(--gray)">售后咨询</div>
+  </div>
+  <div style="padding:16px;padding-bottom:100px;">
+    <div class="message-input-area">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--dark)">💬 给客服留言</div>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:10px;line-height:1.6">有任何问题都可以在这里留言，我们会尽快回复你哦～</div>
+      <textarea id="msgInput" placeholder="描述你的问题，如：水果有损坏、少发货、申请退款等..."></textarea>
+      <button class="send-msg-btn" onclick="sendMessage()">📩 发送留言</button>
+    </div>
+    <div class="section-title" style="margin:0 0 12px">我的留言记录<span class="section-title-line"></span></div>
+    <div class="msg-list" id="msgList"></div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="showNav('home',this)"><span class="nav-icon">🏠</span>首页</button>
+    <button class="nav-item" onclick="showNav('cart',this)"><span class="nav-icon">🛒</span>购物车</button>
+    <button class="nav-item active" onclick="showNav('aftersale',this)"><span class="nav-icon">💬</span>售后</button>
+    <button class="nav-item" onclick="showNav('my',this)"><span class="nav-icon">🌸</span>我的</button>
+  </nav>
+</div>
+
+<!-- MY PAGE -->
+<div id="myPage" class="page">
+  <div class="my-page-header">
+    <div class="avatar-wrap">
+      <div class="avatar" onclick="openProfileEdit()">
+        <span id="avatarEmoji">🌸</span>
+      </div>
+      <div class="username" id="displayName">小苗同学</div>
+      <button class="edit-profile-btn" onclick="openProfileEdit()">✏️ 编辑资料</button>
+    </div>
+  </div>
+  <div class="my-menu">
+    <div class="my-tabs">
+      <button class="my-tab active" onclick="switchMyTab('orders',this)">📦 我的订单</button>
+      <button class="my-tab" onclick="switchMyTab('delivery',this)">🛵 配送进度</button>
+    </div>
+    <div id="my-tab-orders" class="my-tab-content active">
+      <div id="myOrdersList"></div>
+    </div>
+    <div id="my-tab-delivery" class="my-tab-content">
+      <div id="deliveryContent"></div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="showNav('home',this)"><span class="nav-icon">🏠</span>首页</button>
+    <button class="nav-item" onclick="showNav('cart',this)"><span class="nav-icon">🛒</span>购物车</button>
+    <button class="nav-item" onclick="showNav('aftersale',this)"><span class="nav-icon">💬</span>售后</button>
+    <button class="nav-item active" onclick="showNav('my',this)"><span class="nav-icon">🌸</span>我的</button>
+  </nav>
+</div>
+
+</div><!-- /userApp -->
+
+<!-- ADMIN APP -->
+<div id="adminApp" style="display:none">
+<div id="adminLogin" class="admin-login">
+  <div class="admin-login-card">
+    <h2>🌿 青苗管理后台</h2>
+    <p>商家专属管理系统</p>
+    <input class="login-input" type="text" id="adminUser" placeholder="用户名" autocomplete="off">
+    <input class="login-input" type="password" id="adminPass" placeholder="密码" autocomplete="off">
+    <button class="login-btn" onclick="adminLogin()">登录</button>
+    <div class="login-error" id="loginError">用户名或密码错误</div>
+    <div class="login-hint">默认：admin / fruit123</div>
+  </div>
+</div>
+
+<div id="adminPanel" style="display:none">
+  <div class="admin-header">
+    <h2>🌱 青苗水果团购后台</h2>
+    <button class="logout-btn" onclick="adminLogout()">退出</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 概览</button>
+    <button class="admin-tab" onclick="switchAdminTab('fruits',this)">🍎 水果</button>
+    <button class="admin-tab" onclick="switchAdminTab('orders',this)">📦 订单</button>
+    <button class="admin-tab" onclick="switchAdminTab('delivery',this)">🛵 配送</button>
+    <button class="admin-tab" onclick="switchAdminTab('messages',this)">💬 留言</button>
+    <button class="admin-tab" onclick="switchAdminTab('banner',this)">🖼️ 轮播</button>
+    <button class="admin-tab" onclick="switchAdminTab('settings',this)">⚙️ 设置</button>
+  </div>
+  <div id="tab-dashboard" class="admin-section active">
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="section-title" style="margin:0 0 10px">最新订单<span class="section-title-line"></span></div>
+    <div id="recentOrders"></div>
+  </div>
+  <div id="tab-fruits" class="admin-section">
+    <div id="fruitAdminList"></div>
+    <button class="add-fruit-btn" onclick="openAddFruit()">＋ 添加新水果</button>
+  </div>
+  <div id="tab-orders" class="admin-section"><div id="allOrdersList"></div></div>
+  <div id="tab-delivery" class="admin-section">
+    <div style="font-size:13px;color:var(--gray);margin-bottom:14px;line-height:1.6">为每个订单设置配送阶段，用户在「配送进度」中可实时查看。</div>
+    <div id="deliveryAdminList"></div>
+  </div>
+  <div id="tab-messages" class="admin-section"><div id="adminMsgList"></div></div>
+  <div id="tab-banner" class="admin-section">
+    <div id="bannerAdminList"></div>
+    <button class="add-fruit-btn" style="background:linear-gradient(135deg,var(--pink),#e8849a)" onclick="openAddBanner()">＋ 添加轮播</button>
+  </div>
+  <div id="tab-settings" class="admin-section">
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm);">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:14px;">📱 客服微信号</h3>
+      <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">微信号</label><input type="text" class="login-input" id="settingWechat" placeholder="输入你的微信号" style="margin-bottom:0"></div>
+      <button class="submit-order-btn" style="margin-top:12px" onclick="saveSettings()">保存</button>
+    </div>
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm);">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:14px;">🔐 修改密码</h3>
+      <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">新密码</label><input type="password" class="login-input" id="newPassword" placeholder="至少6位" style="margin-bottom:10px"></div>
+      <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">确认密码</label><input type="password" class="login-input" id="confirmPassword" placeholder="再次输入" style="margin-bottom:0"></div>
+      <button class="submit-order-btn" style="margin-top:12px" onclick="changePassword()">修改</button>
+    </div>
+  </div>
+</div>
+</div><!-- /adminApp -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="fruitModal">
+  <div class="modal">
+    <h3 id="fruitModalTitle">添加水果</h3>
+    <div class="img-preview" id="fruitImgPreview"><span id="fruitImgPlaceholder">🍓</span></div>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">图片URL（粘贴图片链接）</label><input type="url" class="login-input" id="fImg" placeholder="https://..." oninput="previewFruitImg(this.value)" style="margin-bottom:10px"></div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px;line-height:1.6">💡 推荐免费图床：<a href="https://imgbb.com" target="_blank" style="color:var(--primary)">imgbb.com</a> 上传图片后复制链接粘贴到此处</div>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">水果名称</label><input type="text" class="login-input" id="fName" placeholder="如：草莓" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">备用Emoji（无图片时显示）</label><input type="text" class="login-input" id="fEmoji" placeholder="如：🍓" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">描述</label><input type="text" class="login-input" id="fDesc" placeholder="如：新鲜草莓，甜度高" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">价格（元）</label><input type="number" class="login-input" id="fPrice" placeholder="如：15" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">单位</label><input type="text" class="login-input" id="fUnit" placeholder="如：斤 / 盒 / 份" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">库存（0=售罄）</label><input type="number" class="login-input" id="fStock" placeholder="如：50" style="margin-bottom:0"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeFruitModal()">取消</button>
+      <button class="modal-confirm" onclick="saveFruit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="bannerModal">
+  <div class="modal">
+    <h3 id="bannerModalTitle">添加轮播图</h3>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px;line-height:1.6">💡 可以上传图片到 <a href="https://imgbb.com" target="_blank" style="color:var(--primary)">imgbb.com</a> 获取链接，或不填图片用纯色背景+文字展示</div>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">图片URL（可选）</label><input type="url" class="login-input" id="bImg" placeholder="https://..." oninput="previewBannerImg(this.value)" style="margin-bottom:0"></div>
+    <div style="width:100%;height:80px;border-radius:8px;overflow:hidden;background:var(--primary-pale);margin:10px 0;display:flex;align-items:center;justify-content:center;" id="bannerImgPreviewBox">
+      <span style="font-size:12px;color:var(--gray)">图片预览</span>
+    </div>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">标题文字</label><input type="text" class="login-input" id="bTitle" placeholder="如：夏日鲜果大促🍉" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">副标题</label><input type="text" class="login-input" id="bSub" placeholder="如：新鲜直达，校园最低价" style="margin-bottom:0"></div>
+    <div class="form-group" style="margin-top:10px"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">背景颜色（无图片时使用）</label><input type="color" class="login-input" id="bColor" value="#5a9e6f" style="height:44px;margin-bottom:0"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeBannerModal()">取消</button>
+      <button class="modal-confirm" onclick="saveBanner()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="refundModal">
+  <div class="modal">
+    <h3>🌸 申请售后</h3>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">问题描述</label><textarea class="login-input" id="refundReason" placeholder="请描述您遇到的问题..." style="height:90px;resize:none;margin-bottom:0"></textarea></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeRefundModal()">取消</button>
+      <button class="modal-confirm" style="background:linear-gradient(135deg,var(--pink),#e8849a)" onclick="submitRefund()">提交</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <h3>✏️ 编辑个人资料</h3>
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:13px;color:var(--gray);margin-bottom:10px">选择头像</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;" id="avatarPicker"></div>
+    </div>
+    <div class="form-group"><label style="font-size:12px;color:var(--gray);display:block;margin-bottom:5px;">昵称</label><input type="text" class="login-input" id="editNickname" placeholder="输入你的昵称" style="margin-bottom:0"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeProfileModal()">取消</button>
+      <button class="modal-confirm" onclick="saveProfile()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== DATA ==========
+const AVATARS = ['🌸','🍓','🌺','🦋','🌻','🍑','🌷','🫐','🌈','🧸','🍰','🌙'];
+const DEFAULT_FRUITS = [
+  {id:1,name:'西瓜',emoji:'🍉',img:'',desc:'清甜沙瓤，夏日必备',price:3.5,unit:'斤',stock:100},
+  {id:2,name:'哈密瓜',emoji:'🍈',img:'',desc:'新疆哈密瓜，香甜多汁',price:8,unit:'斤',stock:50},
+  {id:3,name:'油桃',emoji:'🍑',img:'',desc:'新鲜油桃，皮薄肉嫩',price:10,unit:'斤',stock:60},
+  {id:4,name:'芒果',emoji:'🥭',img:'',desc:'贵妃芒，香气浓郁',price:12,unit:'斤',stock:40},
+  {id:5,name:'青提',emoji:'🍇',img:'',desc:'阳光玫瑰青提，清甜',price:18,unit:'斤',stock:30},
+  {id:6,name:'荔枝',emoji:'🍒',img:'',desc:'玉荷包荔枝，爆甜',price:22,unit:'斤',stock:0},
+  {id:7,name:'耙耙柑',emoji:'🍊',img:'',desc:'春见柑，化渣爆甜',price:9,unit:'斤',stock:80},
+];
+const DEFAULT_BANNERS = [
+  {id:1,img:'',title:'🌿 青苗水果团购',sub:'新鲜直达，校园最低价',color:'#5a9e6f'},
+  {id:2,img:'',title:'🍉 夏日特惠',sub:'满30元免配送费',color:'#e8849a'},
+];
+
+let store = {
+  fruits: DEFAULT_FRUITS,
+  orders: [],
+  cart: {},
+  messages: [],
+  banners: DEFAULT_BANNERS,
+  settings: {wechat:'qingmiao2024',password:'fruit123'},
+  profile: {avatar:'🌸',name:'小苗同学'},
+  nextOrderId: 1001,
+  nextMsgId: 1,
+  editingFruitId: null,
+  editingBannerId: null,
+  refundOrderId: null,
+  selectedAvatar: '🌸',
+};
+
+function loadStore(){
+  try{const s=localStorage.getItem('qingmiao_v2');if(s){const p=JSON.parse(s);store={...store,...p};}}catch(e){}
+}
+function saveStore(){localStorage.setItem('qingmiao_v2',JSON.stringify(store));}
+loadStore();
+
+// ========== NAV ==========
+function showPage(id){document.querySelectorAll('#userApp .page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showNav(tab,btn){
+  if(btn){document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  if(tab==='home'){showPage('homePage');renderFruits();renderBanner();}
+  else if(tab==='cart'){showPage('cartPage');renderCart();}
+  else if(tab==='aftersale'){showPage('aftersalePage');renderMessages();}
+  else if(tab==='my'){showPage('myPage');renderMyPage();}
+}
+function goToCart(){showPage('cartPage');renderCart();}
+function goHome(){showPage('homePage');renderFruits();renderBanner();}
+
+// ========== BANNER ==========
+let bannerTimer=null,currentBanner=0;
+function renderBanner(){
+  const track=document.getElementById('bannerTrack');
+  const dots=document.getElementById('bannerDots');
+  if(!store.banners||store.banners.length===0){track.innerHTML='';dots.innerHTML='';return;}
+  track.innerHTML=store.banners.map(b=>{
+    if(b.img){return`<div class="banner-slide"><img src="${b.img}" onerror="this.style.display='none'" alt="${b.title}"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.4));padding:16px 20px"><div class="banner-title" style="font-size:18px">${b.title}</div><div class="banner-sub">${b.sub}</div></div></div>`;}
+    return`<div class="banner-slide"><div class="banner-slide-inner" style="background:linear-gradient(135deg,${b.color},${b.color}cc)"><div class="banner-title">${b.title}</div><div class="banner-sub">${b.sub}</div></div></div>`;
+  }).join('');
+  dots.innerHTML=store.banners.map((_,i)=>`<button class="banner-dot ${i===0?'active':''}" onclick="goBanner(${i})"></button>`).join('');
+  clearInterval(bannerTimer);
+  currentBanner=0;
+  if(store.banners.length>1){bannerTimer=setInterval(()=>{currentBanner=(currentBanner+1)%store.banners.length;updateBannerPos();},3500);}
+}
+function goBanner(i){currentBanner=i;updateBannerPos();}
+function updateBannerPos(){
+  document.getElementById('bannerTrack').style.transform=`translateX(-${currentBanner*100}%)`;
+  document.querySelectorAll('.banner-dot').forEach((d,i)=>{d.classList.toggle('active',i===currentBanner);});
+}
+
+// ========== FRUITS ==========
+function fruitImgEl(f,size='full'){
+  if(f.img){return`<img src="${f.img}" alt="${f.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`;}
+  return`<div class="fruit-img-placeholder">${f.emoji}</div>`;
+}
+function renderFruits(){
+  const grid=document.getElementById('fruitGrid');
+  grid.innerHTML=store.fruits.map(f=>{
+    const qty=store.cart[f.id]||0;const oos=f.stock===0;
+    return`<div class="fruit-card ${oos?'out-of-stock':''}">
+      <div class="fruit-img-wrap">${fruitImgEl(f)}</div>
+      <div class="fruit-info">
+        <div class="fruit-name">${f.name}${oos?'<span class="fruit-sold-out">售罄</span>':''}</div>
+        <div class="fruit-desc">${f.desc}</div>
+        <div class="fruit-price-row">
+          <div class="fruit-price">¥${f.price}<span>/${f.unit}</span></div>
+          ${qty===0?`<button class="add-btn" onclick="addToCart(${f.id})">＋</button>`:
+          `<div class="qty-control"><button class="qty-btn" onclick="changeQty(${f.id},-1)">－</button><span class="qty-num">${qty}</span><button class="qty-btn" onclick="changeQty(${f.id},1)">＋</button></div>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  updateCartBadge();
+}
+function addToCart(id){store.cart[id]=(store.cart[id]||0)+1;saveStore();renderFruits();showToast('已加入购物车 🛒');}
+function changeQty(id,d){store.cart[id]=Math.max(0,(store.cart[id]||0)+d);if(!store.cart[id])delete store.cart[id];saveStore();renderFruits();updateCartBadge();}
+function updateCartBadge(){
+  const t=Object.values(store.cart).reduce((a,b)=>a+b,0);
+  const b=document.getElementById('cartCount');
+  t>0?(b.textContent=t,b.classList.remove('hidden')):b.classList.add('hidden');
+}
+
+// ========== CART ==========
+function getCartItems(){return Object.entries(store.cart).map(([id,qty])=>{const f=store.fruits.find(x=>x.id==id);return f?{...f,qty}:null;}).filter(Boolean);}
+function getCartTotal(){return getCartItems().reduce((s,i)=>s+i.price*i.qty,0);}
+function renderCart(){
+  const items=getCartItems();const c=document.getElementById('cartContent');
+  if(!items.length){c.innerHTML=`<div class="cart-empty"><div class="big-emoji">🛒</div><p>购物车空空如也～<br>去首页挑选水果吧</p></div>`;return;}
+  const total=getCartTotal();
+  c.innerHTML=`<div class="cart-list">${items.map(i=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${i.img?`<img src="${i.img}" alt="${i.name}" onerror="this.style.display='none'">`:''}${i.img?'':i.emoji}</div>
+      <div class="cart-item-info"><div class="cart-item-name">${i.name}</div><div class="cart-item-price">¥${i.price}/${i.unit} × ${i.qty} = ¥${(i.price*i.qty).toFixed(2)}</div></div>
+      <div class="qty-control"><button class="qty-btn" onclick="cartQty(${i.id},-1)">－</button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="cartQty(${i.id},1)">＋</button></div>
+    </div>`).join('')}</div>
+    <div class="cart-summary">
+      <div class="summary-row"><span>共 ${items.reduce((a,i)=>a+i.qty,0)} 件</span><span></span></div>
+      <div class="summary-total"><span>合计</span><span>¥${total.toFixed(2)}</span></div>
+    </div>
+    <button class="checkout-btn" onclick="goCheckout()">去结算 ¥${total.toFixed(2)}</button>`;
+}
+function cartQty(id,d){store.cart[id]=Math.max(0,(store.cart[id]||0)+d);if(!store.cart[id])delete store.cart[id];saveStore();renderCart();updateCartBadge();}
+function goCheckout(){
+  const items=getCartItems();if(!items.length)return;
+  const total=getCartTotal();
+  document.getElementById('checkoutSummary').innerHTML=`<h3>📋 订单明细</h3>${items.map(i=>`<div class="summary-row"><span>${i.emoji} ${i.name} ×${i.qty}</span><span>¥${(i.price*i.qty).toFixed(2)}</span></div>`).join('')}<div class="summary-total"><span>合计</span><span>¥${total.toFixed(2)}</span></div>`;
+  showPage('checkoutPage');
+}
+function submitOrder(){
+  const name=document.getElementById('buyerName').value.trim();
+  const phone=document.getElementById('buyerPhone').value.trim();
+  const building=document.getElementById('buyerBuilding').value.trim();
+  const note=document.getElementById('buyerNote').value.trim();
+  if(!name||!phone||!building){showToast('请填写完整收货信息');return;}
+  if(!/^1[3-9]\d{9}$/.test(phone)){showToast('请输入正确的手机号');return;}
+  const items=getCartItems();const total=getCartTotal();
+  const orderId='QM'+store.nextOrderId++;
+  store.orders.unshift({id:orderId,name,phone,building,note,items:items.map(i=>({id:i.id,name:i.name,emoji:i.emoji,img:i.img,price:i.price,unit:i.unit,qty:i.qty})),total,status:'pending',deliveryStage:0,time:new Date().toLocaleString('zh-CN'),refundReason:''});
+  store.cart={};
+  document.getElementById('serviceWechat').textContent=store.settings.wechat;
+  saveStore();showPage('successPage');updateCartBadge();
+}
+
+// ========== MESSAGES ==========
+function renderMessages(){
+  const list=document.getElementById('msgList');
+  const myMsgs=store.messages.filter(m=>m.userId===getUserId());
+  if(!myMsgs.length){list.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--gray);font-size:13px">暂无留言，有问题尽管告诉我们～🌸</div>`;return;}
+  list.innerHTML=myMsgs.map(m=>`
+    <div class="msg-bubble">
+      <div class="msg-meta"><span class="msg-sender">我</span><span class="msg-time">${m.time}</span></div>
+      <div class="msg-text">${m.text}</div>
+      ${m.reply?`<div class="msg-reply"><span class="msg-reply-label">🌿 客服回复：</span>${m.reply}</div>`:`<div style="font-size:11px;color:var(--gray);margin-top:6px">等待客服回复中...</div>`}
+    </div>`).join('');
+}
+function getUserId(){
+  let id=localStorage.getItem('qm_uid');
+  if(!id){id='u'+Date.now();localStorage.setItem('qm_uid',id);}
+  return id;
+}
+function sendMessage(){
+  const text=document.getElementById('msgInput').value.trim();
+  if(!text){showToast('请输入留言内容');return;}
+  store.messages.unshift({id:store.nextMsgId++,userId:getUserId(),userName:store.profile.name,text,time:new Date().toLocaleString('zh-CN'),reply:''});
+  document.getElementById('msgInput').value='';
+  saveStore();renderMessages();showToast('留言已发送，等待客服回复 🌸');
+}
+
+// ========== MY PAGE ==========
+function renderMyPage(){
+  document.getElementById('displayName').textContent=store.profile.name;
+  document.getElementById('avatarEmoji').textContent=store.profile.avatar;
+  renderMyOrders();renderDelivery();
+}
+function switchMyTab(tab,btn){
+  document.querySelectorAll('.my-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.my-tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('my-tab-'+tab).classList.add('active');
+  if(tab==='orders')renderMyOrders();else renderDelivery();
+}
+
+const statusMap={pending:{text:'待确认',cls:'status-pending'},confirmed:{text:'已确认',cls:'status-confirmed'},delivered:{text:'已送达',cls:'status-delivered'},refund_pending:{text:'退款申请中',cls:'status-refund'},refunded:{text:'已退款',cls:'status-refund'}};
+
+function renderMyOrders(){
+  const c=document.getElementById('myOrdersList');
+  if(!store.orders.length){c.innerHTML=`<div style="text-align:center;padding:50px 20px;color:var(--gray)"><div style="font-size:48px;margin-bottom:12px">📦</div><div>还没有订单记录哦</div></div>`;return;}
+  c.innerHTML=store.orders.map(o=>{
+    const s=statusMap[o.status]||statusMap.pending;
+    const canRefund=['pending','confirmed'].includes(o.status);
+    return`<div class="order-card">
+      <div class="order-header"><span class="order-id">订单号：${o.id}</span><span class="order-status ${s.cls}">${s.text}</span></div>
+      <div class="order-items">${o.items.map(i=>`${i.emoji}${i.name}×${i.qty}`).join('、')}</div>
+      <div class="order-total">¥${o.total.toFixed(2)}</div>
+      <div class="order-info">📍 ${o.building} · ${o.time}</div>
+      ${o.refundReason?`<div class="order-info" style="color:var(--pink);margin-top:3px">售后：${o.refundReason}</div>`:''}
+      ${canRefund?`<button class="refund-btn" onclick="openRefund('${o.id}')">申请售后</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ========== DELIVERY TIMELINE ==========
+function stageIcon(stage,current){
+  // stage: 0=分装 1=配送中 2=配送完毕
+  const done=current>stage,active=current===stage;
+  if(stage===0){
+    // Q版分装人物
+    return`<svg class="svg-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="14" r="8" fill="${done||active?'#5a9e6f':'#c8d8c9'}"/>
+      <circle cx="25" cy="12" r="1.2" fill="white"/>
+      <circle cx="31" cy="12" r="1.2" fill="white"/>
+      <path d="M25 17 Q28 19 31 17" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <rect x="20" y="22" width="16" height="14" rx="6" fill="${done||active?'#7dba8f':'#c8d8c9'}"/>
+      <line x1="28" y1="36" x2="24" y2="46" stroke="${done||active?'#5a9e6f':'#c8d8c9'}" stroke-width="3" stroke-linecap="round"/>
+      <line x1="28" y1="36" x2="32" y2="46" stroke="${done||active?'#5a9e6f':'#c8d8c9'}" stroke-width="3" stroke-linecap="round"/>
+      <line x1="20" y1="26" x2="12" y2="30" stroke="${done||active?'#7dba8f':'#c8d8c9'}" stroke-width="3" stroke-linecap="round"/>
+      <line x1="36" y1="26" x2="44" y2="30" stroke="${done||active?'#7dba8f':'#c8d8c9'}" stroke-width="3" stroke-linecap="round"/>
+      <rect x="38" y="28" width="12" height="9" rx="2" fill="${done||active?'#f4a7b9':'#e8d8da'}"/>
+      <circle cx="41" cy="31" r="1" fill="white"/>
+      <circle cx="44" cy="31" r="1" fill="white"/>
+      <circle cx="47" cy="31" r="1" fill="white"/>
+      ${active?`<circle cx="44" cy="22" r="5" fill="#f9c74f" opacity=".8"><animate attributeName="r" values="4;6;4" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;.3;.8" dur="1s" repeatCount="indefinite"/></circle>`:''}
+    </svg>`;
+  }
+  if(stage===1){
+    // Q版骑电动车
+    return`<svg class="svg-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="${active?'body-anim':''}">
+        <circle cx="30" cy="10" r="6" fill="${done||active?'#5a9e6f':'#c8d8c9'}"/>
+        <circle cx="28" cy="9" r="1" fill="white"/>
+        <circle cx="32" cy="9" r="1" fill="white"/>
+        <path d="M28 12 Q30 13.5 32 12" stroke="white" stroke-width="1" stroke-linecap="round" fill="none"/>
+        <ellipse cx="28" cy="24" rx="9" ry="7" fill="${done||active?'#7dba8f':'#c8d8c9'}"/>
+        <line x1="30" y1="16" x2="30" y2="22" stroke="${done||active?'#5a9e6f':'#c8d8c9'}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <rect x="8" y="30" width="40" height="8" rx="4" fill="${done||active?'#a8d5b5':'#dde8dd'}"/>
+      <circle cx="15" cy="42" r="6" fill="${done||active?'#3d7a52':'#aabfaa'}"/>
+      <circle cx="15" cy="42" r="3" fill="${done||active?'#7dba8f':'#c8d8c9'}">
+        ${active?`<animateTransform attributeName="transform" type="rotate" from="0 15 42" to="360 15 42" dur=".8s" repeatCount="indefinite"/>`:''}
+      </circle>
+      <circle cx="41" cy="42" r="6" fill="${done||active?'#3d7a52':'#aabfaa'}"/>
+      <circle cx="41" cy="42" r="3" fill="${done||active?'#7dba8f':'#c8d8c9'}">
+        ${active?`<animateTransform attributeName="transform" type="rotate" from="0 41 42" to="360 41 42" dur=".8s" repeatCount="indefinite"/>`:''}
+      </circle>
+      ${active?`<path d="M4 34 Q2 30 0 34" stroke="#f4a7b9" stroke-width="1.5" opacity=".6"><animate attributeName="opacity" values=".6;0;.6" dur=".6s" repeatCount="indefinite"/></path><path d="M2 38 Q0 34 -2 38" stroke="#f4a7b9" stroke-width="1.5" opacity=".4"><animate attributeName="opacity" values=".4;0;.4" dur=".6s" begin=".2s" repeatCount="indefinite"/></path>`:''}
+    </svg>`;
+  }
+  // 宿舍楼
+  return`<svg class="svg-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="20" width="40" height="32" rx="2" fill="${done||active?'#5a9e6f':'#c8d8c9'}"/>
+    <rect x="14" y="8" width="28" height="14" rx="2" fill="${done||active?'#7dba8f':'#d8e8d8'}"/>
+    <rect x="22" y="2" width="12" height="8" rx="1" fill="${done||active?'#3d7a52':'#b8ccb8'}"/>
+    <rect x="12" y="26" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="24" y="26" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="36" y="26" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="12" y="37" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="24" y="37" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="36" y="37" width="8" height="7" rx="1" fill="${done||active?'#d8f5e0':'#eef4ee'}"/>
+    <rect x="22" y="44" width="12" height="8" rx="1" fill="${done||active?'#3d7a52':'#b8ccb8'}"/>
+    ${active?`<circle cx="44" cy="8" r="4" fill="#f9c74f"><animate attributeName="opacity" values="1;.3;1" dur="1s" repeatCount="indefinite"/></circle><text x="42" y="11" font-size="6" fill="white">★</text>`:''}
+  </svg>`;
+}
+
+const stageNames=['📦 分装中','🛵 配送中','🏠 配送完毕'];
+const stageDescs=['正在为你精心分装水果，马上出发！','骑手正在配送，请注意接收～','水果已送到，记得评价哦🌸'];
+
+function renderDelivery(){
+  const c=document.getElementById('deliveryContent');
+  const myOrders=store.orders.filter(o=>o.status==='confirmed'||o.status==='delivered');
+  if(!myOrders.length){c.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--gray);font-size:13px"><div style="font-size:48px;margin-bottom:12px">🛵</div>暂无配送中的订单</div>`;return;}
+  c.innerHTML=myOrders.map(o=>{
+    const cur=o.deliveryStage||0;
+    return`<div class="order-card" style="margin-bottom:16px">
+      <div class="order-header"><span class="order-id">订单 ${o.id}</span><span class="order-status status-confirmed">${stageNames[cur]}</span></div>
+      <div class="timeline" style="margin-top:12px">
+        ${[0,1,2].map((s,idx)=>`
+          <div class="timeline-item">
+            <div class="timeline-left">
+              <div class="timeline-icon ${cur===s?'active':cur>s?'done':''}">${stageIcon(s,cur)}</div>
+              ${idx<2?`<div class="timeline-line ${cur>s?'done':''}"></div>`:''}
+            </div>
+            <div class="timeline-right">
+              <div class="timeline-title ${cur===s?'active':cur>s?'done':''}">${stageNames[s]}</div>
+              ${cur>=s?`<div class="timeline-desc">${stageDescs[s]}</div>`:'<div class="timeline-desc" style="opacity:.4">等待中...</div>'}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ========== REFUND ==========
+function openRefund(id){store.refundOrderId=id;document.getElementById('refundReason').value='';document.getElementById('refundModal').classList.add('open');}
+function closeRefundModal(){document.getElementById('refundModal').classList.remove('open');}
+function submitRefund(){
+  const reason=document.getElementById('refundReason').value.trim();
+  if(!reason){showToast('请描述问题');return;}
+  const o=store.orders.find(x=>x.id===store.refundOrderId);
+  if(o){o.status='refund_pending';o.refundReason=reason;}
+  saveStore();closeRefundModal();renderMyOrders();showToast('售后申请已提交 🌸');
+}
+
+// ========== PROFILE ==========
+function openProfileEdit(){
+  store.selectedAvatar=store.profile.avatar;
+  document.getElementById('editNickname').value=store.profile.name;
+  const picker=document.getElementById('avatarPicker');
+  picker.innerHTML=AVATARS.map(a=>`<div onclick="selectAvatar('${a}',this)" style="width:44px;height:44px;border-radius:50%;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:2px solid ${a===store.profile.avatar?'var(--primary)':'transparent'};transition:all .2s">${a}</div>`).join('');
+  document.getElementById('profileModal').classList.add('open');
+}
+function selectAvatar(a,el){
+  store.selectedAvatar=a;
+  document.querySelectorAll('#avatarPicker div').forEach(d=>d.style.borderColor='transparent');
+  el.style.borderColor='var(--primary)';
+}
+function closeProfileModal(){document.getElementById('profileModal').classList.remove('open');}
+function saveProfile(){
+  const name=document.getElementById('editNickname').value.trim();
+  if(!name){showToast('请输入昵称');return;}
+  store.profile={avatar:store.selectedAvatar,name};
+  saveStore();closeProfileModal();renderMyPage();showToast('资料已更新 🌸');
+}
+
+// ========== ADMIN ==========
+function showAdminApp(){document.getElementById('userApp').style.display='none';document.getElementById('adminApp').style.display='block';}
+function showUserApp(){document.getElementById('adminApp').style.display='none';document.getElementById('userApp').style.display='block';}
+function adminLogin(){
+  const u=document.getElementById('adminUser').value,p=document.getElementById('adminPass').value;
+  if(u==='admin'&&p===store.settings.password){document.getElementById('adminLogin').style.display='none';document.getElementById('adminPanel').style.display='block';renderAdminDashboard();}
+  else{document.getElementById('loginError').style.display='block';}
+}
+function adminLogout(){document.getElementById('adminLogin').style.display='flex';document.getElementById('adminPanel').style.display='none';document.getElementById('adminUser').value='';document.getElementById('adminPass').value='';showUserApp();}
+function switchAdminTab(tab,btn){
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='dashboard')renderAdminDashboard();
+  else if(tab==='fruits')renderAdminFruits();
+  else if(tab==='orders')renderAdminOrders();
+  else if(tab==='delivery')renderDeliveryAdmin();
+  else if(tab==='messages')renderAdminMessages();
+  else if(tab==='banner')renderBannerAdmin();
+  else if(tab==='settings')document.getElementById('settingWechat').value=store.settings.wechat;
+}
+
+function adminOrderCard(o,mini){
+  const s=statusMap[o.status]||statusMap.pending;
+  return`<div class="admin-order-card">
+    <div class="admin-order-header"><span class="admin-order-id">${o.id} · ${o.time}</span><span class="order-status ${s.cls}">${s.text}</span></div>
+    <div class="admin-order-name">👤 ${o.name} 📱 ${o.phone}</div>
+    <div class="admin-order-detail">📍 ${o.building}<br>🛒 ${o.items.map(i=>`${i.emoji}${i.name}×${i.qty}`).join('、')}<br>💰 ¥${o.total.toFixed(2)}${o.note?`<br>📝 ${o.note}`:''}${o.refundReason?`<br>⚠️ 售后：${o.refundReason}`:''}</div>
+    ${!mini?`<div class="admin-order-actions">
+      ${o.status==='pending'?`<button class="status-btn btn-confirm" onclick="updateOrderStatus('${o.id}','confirmed')">✅ 确认</button>`:''}
+      ${o.status==='confirmed'?`<button class="status-btn btn-deliver" onclick="updateOrderStatus('${o.id}','delivered')">🏠 送达</button>`:''}
+      ${o.status==='refund_pending'?`<button class="status-btn btn-refund-ok" onclick="updateOrderStatus('${o.id}','refunded')">💸 退款</button>`:''}
+    </div>`:''}
+  </div>`;
+}
+function renderAdminDashboard(){
+  const total=store.orders.length,rev=store.orders.filter(o=>o.status!=='refunded').reduce((s,o)=>s+o.total,0);
+  const pend=store.orders.filter(o=>o.status==='pending').length,ref=store.orders.filter(o=>o.status==='refund_pending').length;
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">总订单</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--primary-dark)">¥${rev.toFixed(0)}</div><div class="stat-label">总收入</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#856404">${pend}</div><div class="stat-label">待处理</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#9e4460">${ref}</div><div class="stat-label">退款申请</div></div>`;
+  document.getElementById('recentOrders').innerHTML=store.orders.slice(0,3).map(o=>adminOrderCard(o,true)).join('')||'<div style="text-align:center;padding:20px;color:var(--gray);font-size:13px">暂无订单</div>';
+}
+function renderAdminOrders(){
+  document.getElementById('allOrdersList').innerHTML=store.orders.map(o=>adminOrderCard(o,false)).join('')||'<div style="text-align:center;padding:30px;color:var(--gray);font-size:13px">暂无订单</div>';
+}
+function updateOrderStatus(id,status){
+  const o=store.orders.find(x=>x.id===id);if(o)o.status=status;
+  saveStore();renderAdminOrders();renderAdminDashboard();showToast('订单已更新');
+}
+
+// DELIVERY ADMIN
+function renderDeliveryAdmin(){
+  const orders=store.orders.filter(o=>['confirmed','pending'].includes(o.status));
+  const c=document.getElementById('deliveryAdminList');
+  if(!orders.length){c.innerHTML='<div style="text-align:center;padding:30px;color:var(--gray);font-size:13px">暂无待配送订单</div>';return;}
+  c.innerHTML=orders.map(o=>`
+    <div class="delivery-order-row">
+      <div class="d-header"><span style="font-size:13px;font-weight:600">${o.id} · ${o.name}</span><span style="font-size:11px;color:var(--gray)">${o.building}</span></div>
+      <div class="d-info">${o.items.map(i=>`${i.emoji}${i.name}×${i.qty}`).join('、')} · ¥${o.total.toFixed(2)}</div>
+      <div class="delivery-stage-btns">
+        ${stageNames.map((n,i)=>`<button class="stage-btn ${(o.deliveryStage||0)===i?'active':''}" onclick="setDeliveryStage('${o.id}',${i})">${n}</button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function setDeliveryStage(id,stage){
+  const o=store.orders.find(x=>x.id===id);if(o)o.deliveryStage=stage;
+  saveStore();renderDeliveryAdmin();showToast('配送进度已更新');
+}
+
+// MESSAGES ADMIN
+function renderAdminMessages(){
+  const c=document.getElementById('adminMsgList');
+  if(!store.messages.length){c.innerHTML='<div style="text-align:center;padding:30px;color:var(--gray);font-size:13px">暂无用户留言</div>';return;}
+  c.innerHTML=store.messages.map(m=>`
+    <div class="admin-msg-card">
+      <div class="admin-msg-header"><span style="font-size:13px;font-weight:600">👤 ${m.userName||'用户'}</span><span style="font-size:11px;color:var(--gray)">${m.time}</span></div>
+      <div style="font-size:13px;color:var(--dark);margin-bottom:6px">${m.text}</div>
+      ${m.reply?`<div class="msg-reply"><span class="msg-reply-label">已回复：</span>${m.reply}</div>`:''}
+      <div class="admin-reply-area">
+        <textarea id="reply_${m.id}" placeholder="输入回复内容...">${m.reply||''}</textarea>
+        <button class="admin-reply-btn" onclick="replyMsg(${m.id})">💬 ${m.reply?'修改回复':'回复'}</button>
+      </div>
+    </div>`).join('');
+}
+function replyMsg(id){
+  const reply=document.getElementById('reply_'+id).value.trim();
+  if(!reply){showToast('请输入回复内容');return;}
+  const m=store.messages.find(x=>x.id===id);if(m)m.reply=reply;
+  saveStore();renderAdminMessages();showToast('回复已保存');
+}
+
+// FRUITS ADMIN
+function renderAdminFruits(){
+  document.getElementById('fruitAdminList').innerHTML=store.fruits.map(f=>`
+    <div class="admin-fruit-card">
+      <div class="admin-fruit-img">${f.img?`<img src="${f.img}" alt="${f.name}" onerror="this.style.display='none'">`:''}${f.img?'':f.emoji}</div>
+      <div class="admin-fruit-info">
+        <div class="admin-fruit-name">${f.name}</div>
+        <div class="admin-fruit-meta">¥${f.price}/${f.unit} · ${f.stock===0?'售罄':'库存'+f.stock}</div>
+      </div>
+      <div class="admin-actions">
+        <button class="edit-btn" onclick="openEditFruit(${f.id})">编辑</button>
+        <button class="del-btn" onclick="deleteFruit(${f.id})">删除</button>
+      </div>
+    </div>`).join('');
+}
+function previewFruitImg(url){
+  const p=document.getElementById('fruitImgPreview');
+  if(url){p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)" onerror="this.parentElement.innerHTML='<span>图片加载失败</span>'">`;}
+  else{p.innerHTML=`<span id="fruitImgPlaceholder">${document.getElementById('fEmoji').value||'🍓'}</span>`;}
+}
+function openAddFruit(){store.editingFruitId=null;document.getElementById('fruitModalTitle').textContent='添加水果';['fImg','fName','fEmoji','fDesc','fPrice','fUnit','fStock'].forEach(id=>document.getElementById(id).value='');document.getElementById('fruitImgPreview').innerHTML='<span id="fruitImgPlaceholder">🍓</span>';document.getElementById('fruitModal').classList.add('open');}
+function openEditFruit(id){
+  const f=store.fruits.find(x=>x.id===id);if(!f)return;
+  store.editingFruitId=id;document.getElementById('fruitModalTitle').textContent='编辑水果';
+  document.getElementById('fImg').value=f.img||'';document.getElementById('fName').value=f.name;document.getElementById('fEmoji').value=f.emoji;document.getElementById('fDesc').value=f.desc;document.getElementById('fPrice').value=f.price;document.getElementById('fUnit').value=f.unit;document.getElementById('fStock').value=f.stock;
+  const p=document.getElementById('fruitImgPreview');
+  p.innerHTML=f.img?`<img src="${f.img}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)">`:`<span>${f.emoji}</span>`;
+  document.getElementById('fruitModal').classList.add('open');
+}
+function closeFruitModal(){document.getElementById('fruitModal').classList.remove('open');}
+function saveFruit(){
+  const name=document.getElementById('fName').value.trim(),emoji=document.getElementById('fEmoji').value.trim(),desc=document.getElementById('fDesc').value.trim(),price=parseFloat(document.getElementById('fPrice').value),unit=document.getElementById('fUnit').value.trim(),stock=parseInt(document.getElementById('fStock').value),img=document.getElementById('fImg').value.trim();
+  if(!name||!price||!unit){showToast('请填写名称、价格、单位');return;}
+  if(store.editingFruitId){const f=store.fruits.find(x=>x.id===store.editingFruitId);if(f)Object.assign(f,{name,emoji:emoji||'🍎',desc,price,unit,stock:isNaN(stock)?0:stock,img});}
+  else{store.fruits.push({id:Date.now(),name,emoji:emoji||'🍎',desc,price,unit,stock:isNaN(stock)?0:stock,img});}
+  saveStore();closeFruitModal();renderAdminFruits();showToast(store.editingFruitId?'已更新':'已添加');
+}
+function deleteFruit(id){if(!confirm('确定删除？'))return;store.fruits=store.fruits.filter(f=>f.id!==id);saveStore();renderAdminFruits();showToast('已删除');}
+
+// BANNER ADMIN
+function renderBannerAdmin(){
+  const c=document.getElementById('bannerAdminList');
+  c.innerHTML=store.banners.map((b,i)=>`
+    <div class="banner-admin-card">
+      <div class="banner-preview">${b.img?`<img src="${b.img}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}<div style="${b.img?'position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.5));padding:8px 10px;':''}"><div style="font-size:13px;font-weight:700;color:white;text-shadow:0 1px 4px rgba(0,0,0,.3)">${b.title}</div><div style="font-size:11px;color:rgba(255,255,255,.9)">${b.sub}</div></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="edit-btn" style="flex:1" onclick="openEditBanner(${i})">编辑</button>
+        <button class="del-btn" onclick="deleteBanner(${i})">删除</button>
+      </div>
+    </div>`).join('');
+}
+function previewBannerImg(url){const box=document.getElementById('bannerImgPreviewBox');box.innerHTML=url?`<img src="${url}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='图片加载失败'">`:'<span style="font-size:12px;color:var(--gray)">图片预览</span>';}
+function openAddBanner(){store.editingBannerId=null;document.getElementById('bannerModalTitle').textContent='添加轮播';['bImg','bTitle','bSub'].forEach(id=>document.getElementById(id).value='');document.getElementById('bColor').value='#5a9e6f';document.getElementById('bannerImgPreviewBox').innerHTML='<span style="font-size:12px;color:var(--gray)">图片预览</span>';document.getElementById('bannerModal').classList.add('open');}
+function openEditBanner(idx){
+  store.editingBannerId=idx;const b=store.banners[idx];
+  document.getElementById('bannerModalTitle').textContent='编辑轮播';
+  document.getElementById('bImg').value=b.img||'';document.getElementById('bTitle').value=b.title;document.getElementById('bSub').value=b.sub;document.getElementById('bColor').value=b.color||'#5a9e6f';
+  document.getElementById('bannerImgPreviewBox').innerHTML=b.img?`<img src="${b.img}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:12px;color:var(--gray)">图片预览</span>';
+  document.getElementById('bannerModal').classList.add('open');
+}
+function closeBannerModal(){document.getElementById('bannerModal').classList.remove('open');}
+function saveBanner(){
+  const img=document.getElementById('bImg').value.trim(),title=document.getElementById('bTitle').value.trim(),sub=document.getElementById('bSub').value.trim(),color=document.getElementById('bColor').value;
+  if(!title){showToast('请输入标题');return;}
+  const b={id:Date.now(),img,title,sub,color};
+  if(store.editingBannerId!==null)store.banners[store.editingBannerId]=b;else store.banners.push(b);
+  saveStore();closeBannerModal();renderBannerAdmin();showToast('轮播已保存');
+}
+function deleteBanner(idx){if(!confirm('确定删除？'))return;store.banners.splice(idx,1);saveStore();renderBannerAdmin();showToast('已删除');}
+
+// SETTINGS
+function saveSettings(){const w=document.getElementById('settingWechat').value.trim();if(!w){showToast('请输入微信号');return;}store.settings.wechat=w;saveStore();showToast('已保存');}
+function changePassword(){
+  const n=document.getElementById('newPassword').value,c=document.getElementById('confirmPassword').value;
+  if(!n||n.length<6){showToast('密码至少6位');return;}if(n!==c){showToast('两次输入不一致');return;}
+  store.settings.password=n;saveStore();showToast('密码已修改');document.getElementById('newPassword').value='';document.getElementById('confirmPassword').value='';
+}
+
+// TOAST
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// INIT
+function checkRoute(){if(window.location.hash==='#admin')showAdminApp();}
+renderFruits();renderBanner();checkRoute();
+window.addEventListener('hashchange',checkRoute);
+</script>
 </body>
 </html>
